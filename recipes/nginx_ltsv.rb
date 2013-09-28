@@ -29,7 +29,7 @@ log_format_ltsv =<<EOS
                     'ua:$http_user_agent\\t'
 EOS
 
-node.override = {
+node.override.nginx = {
   'log_format' => {
     :main => log_format_main.chomp,
     :ltsv => log_format_ltsv.chomp,
