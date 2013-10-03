@@ -8,5 +8,5 @@
 #
 
 common_postfix_postmap "virtual_alias_maps" do
-  content "@#{node[:hostname]}.#{node[:postfix][:main][:mydomain]} root"
+  content "#{node[:hostname]}.#{node[:postfix][:main][:mydomain]} root"
 end
