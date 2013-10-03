@@ -31,7 +31,7 @@ EOH
     chown -R #{params[:local_owner]}:#{params[:local_group]} \
       #{params[:install_prefix]}/rbenv
 EOH
-    not_if { ::FileTest.exist?("#{params[:install_prefix]}/rbenv") }
+    not_if { ::FileTest.directory?("#{params[:install_prefix]}/rbenv/versions/#{params[:name]}") }
   end
 
   file "/etc/profile.d/rbenv.sh" do
