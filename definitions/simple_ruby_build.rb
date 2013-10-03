@@ -27,6 +27,7 @@ EOH
     group "root"
     cwd params[:install_prefix]
     code <<-EOH
+    rm -fr #{params[:install_prefix]}/rbenv
     tar zxf #{params[:install_prefix]}/#{rbenv_tarball}
     chown -R #{params[:local_owner]}:#{params[:local_group]} \
       #{params[:install_prefix]}/rbenv
