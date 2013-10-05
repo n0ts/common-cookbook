@@ -12,7 +12,7 @@ define :common_profile_keychain, :user => "root", :group => "root" do
     user params[:user]
     group params[:group]
     content <<-EOH
-if [ -x "`which keychain 2> /dev/null`" ]; then
+if [ -x "`which keychain 2>/dev/null`" ]; then
   HOSTNAME=`hostname`
   keychain --quiet $HOME/.ssh/id_rsa
   [ -f ~/.keychain/$HOSTNAME-sh ] && source ~/.keychain/$HOSTNAME-sh
