@@ -24,6 +24,14 @@ define :common_ssh_keys, :id_rsa => "", :id_rsa_pub => "", :ssh_config => "" do
     not_if { params[:ssh_config].empty? }
   end
 
+  file "/home/#{params[:name]}/.ssh/known_hosts" do
+    content ""
+    owner params[:name]
+    group params[:name]
+    mode 0444
+    action :create
+  end
+
   file "/home/#{params[:name]}/.ssh/id_rsa" do
     content params[:id_rsa]
     owner params[:name]
