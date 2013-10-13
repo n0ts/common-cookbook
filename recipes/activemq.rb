@@ -20,6 +20,14 @@
 activemq_dir = "#{node['activemq']['home']}/apache-activemq-#{node['activemq']['version']}"
 
 #
+# ActiveMQ home symlink
+#
+link "#{node['activemq']['home']}/activemq" do
+  to activemq_dir
+end
+
+
+#
 # ActiveMQ user
 #
 common_user "activemq" do
