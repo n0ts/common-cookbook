@@ -9,4 +9,8 @@
 
 template "/tmp/chef-node.txt" do
   source "chef-node.txt.erb"
+  owner "root"
+  group "root"
+  mode 0600
+  action :create
 end
