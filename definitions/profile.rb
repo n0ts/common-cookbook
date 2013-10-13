@@ -23,11 +23,18 @@ end
 
 
 define :common_profile, :user => "root", :group => "root", :content => "" do
+  execute "execute-profile" do
+    user "root"
+    command "sh /etc/profile.d/#{params[:name]}.sh"
+    action :nothing
+  end
+
   file "/etc/profile.d/#{params[:name]}.sh" do
     owner "root"
     group "root"
     mode 0755
     content params[:content]
     action :create
+    notifies :run, "execute[execute-profile]", :immediately
   end
 end
