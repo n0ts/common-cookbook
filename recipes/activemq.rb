@@ -74,7 +74,7 @@ template "#{activemq_dir}/conf/credentials.properties" do
 end
 
 template "/etc/logrotate.d/activemq" do
-  source "activemq-logrotate.rb"
+  source "activemq-logrotate.erb"
   owner "root"
   group "root"
   mode 0644
