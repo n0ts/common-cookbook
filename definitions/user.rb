@@ -7,8 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-define :common_user, :password => "", :shell => "/bin/bash" do
-  home_dir = "/home/#{params[:name]}"
+define :common_user, :password => "", :shell => "/bin/bash", :home_dir => "" do
+  home_dir = params[:home_dir].empty? ? "/home/#{params[:name]}" : params[:home_dir]
   directory home_dir do
     owner params[:name]
     group params[:name]
