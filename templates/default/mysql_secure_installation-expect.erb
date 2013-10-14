@@ -1,0 +1,22 @@
+#!/usr/bin/expect --
+spawn /usr/bin/mysql_secure_installation
+
+expect "Enter current password for root (enter for none):"
+send "<%= node['mysql']['server_root_password'] %>\n"
+	
+expect "Change root password?"
+send "n\n"
+
+expect "Remove anonymous users?"
+send "y\n"
+
+expect "Disallow root login remotely?"
+send "y\n"
+
+expect "Remove test database and access to it?"
+send "y\n"
+
+expect "Reload privilege tables now?"
+send "y\n"
+
+puts "Ended expect script."
