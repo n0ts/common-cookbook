@@ -221,8 +221,12 @@ mkdir /var/lib/mysql
 chown -R mysql:mysql /var/lib/mysql/
 chmod 700 /var/lib/mysql
 sudo -u mysql mysql_install_db
+service mysql start
 EOH
+    timeout 600
     action :nothing
+    notifies :run, "execute[assign-root-password]"
+    not_if { ::FileTest.directory?("/var/lib/mysql-orig") }
   end
 
   service "mysql" do
