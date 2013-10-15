@@ -263,6 +263,7 @@ end
 
 execute "mysql_secure_installation" do
   command "expect -f /usr/local/etc/mysql_secure_installation-expect"
+  timeout 60
   user "root"
   action :nothing
 end
