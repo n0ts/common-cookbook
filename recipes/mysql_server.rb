@@ -215,6 +215,7 @@ unless platform_family?(%w{mac_os_x})
   bash "reinstall-mysql-datadir" do
     user "root"
     code <<-EOH
+service mysql stop
 mv /var/lib/mysql /var/lib/mysql-orig
 mkdir /var/lib/mysql
 chown -R mysql:mysql /var/lib/mysql/
