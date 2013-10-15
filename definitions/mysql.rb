@@ -7,14 +7,14 @@
 # All rights reserved - Do Not Redistribute
 #
 
-define :common_mysql_database, :write_user_name => "", :write_user_password => "", :read_user_name => "", :read_user_password => "" do
+define :common_mysql_database, :root_password => "", :write_user_name => "", :write_user_password => "", :read_user_name => "", :read_user_password => "" do
 
   include_recipe "database::mysql"
 
   mysql_connection_info = {
     :host     => "localhost",
     :username => "root",
-    :password => node["mysql"]["server_root_password"],
+    :password => params[:root_password],
   }
 
   mysql_database params[:name] do
@@ -50,13 +50,13 @@ define :common_mysql_database, :write_user_name => "", :write_user_password => "
 end
 
 
-define :common_mysql_nagios, :user_password => "nagios" do
+define :common_mysql_nagios, :root_password => "", :user_password => "nagios" do
   include_recipe "database::mysql"
 
   mysql_connection_info = {
     :host     => "localhost",
     :username => "root",
-    :password => node["mysql"]["server_root_password"],
+    :password => params[:root_password],
   }
 
   mysql_database_user params[:name] do
