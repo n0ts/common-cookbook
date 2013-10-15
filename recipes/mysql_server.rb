@@ -88,8 +88,7 @@ end
 node['mysql']['server']['packages'].each do |package_name|
   package package_name do
     action :install
-    #notifies :start, "service[mysql]", :immediately
-   notifies :run, "execute[remove-mycnf]" , :immediately
+    notifies :run, "execute[remove-mycnf]" , :immediately
   end
 end
 
@@ -210,6 +209,19 @@ unless platform_family?(%w{mac_os_x})
     mode "0644"
     variables :skip_federated => skip_federated
     action :create_if_missing
+    notifies :run, "bash[reinstall-mysql-datadir]"
+  end
+
+  bash "reinstall-mysql-datadir" do
+    user "root"
+    code <<-EOH
+mv /var/lib/mysql /var/lib/mysql-orig
+mkdir /var/lib/mysql
+chown -R mysql:mysql /var/lib/mysql/
+chmod 700 /var/lib/mysql
+sudo -u mysql mysql_install_db
+EOH
+    action :nothing
   end
 
   service "mysql" do

@@ -39,6 +39,7 @@ define :common_mysql_database, :write_user_name => "", :write_user_password => "
   mysql_database_user params[:read_user_name] do
     connection mysql_connection_info
     password params[:read_user_password]
+    database_name params[:name]
     host "%"
     privileges [
                 "select",
