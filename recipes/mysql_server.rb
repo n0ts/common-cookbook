@@ -218,7 +218,7 @@ unless platform_family?(%w{mac_os_x})
 service mysql stop
 mv #{node['mysql']['data_dir']} #{node['mysql']['data_dir']}-orig
 mkdir #{node['mysql']['data_dir']}
-chown -R mysql:mysql  #{node['mysql']['data_dir']}
+chown -R mysql:mysql #{node['mysql']['data_dir']}
 chmod 700 #{node['mysql']['data_dir']}
 sudo -u mysql mysql_install_db
 service mysql start
@@ -229,7 +229,7 @@ while true; do
     if [ $RETVAL == 0 ]; then
         break
     fi
-    sleep 10
+    sleep 60
     count=`expr $count + 1`
     if [ $count == 10 ]; then
         echo "MySQL server is not connected."
@@ -240,7 +240,7 @@ EOH
     timeout 600
     action :nothing
     notifies :run, "execute[assign-root-password]", :immediately
-    not_if { ::FileTest.directory?("/var/lib/mysql-orig") }
+    not_if { ::FileTest.directory?("#{node['mysql']['data_dir']}-orig") }
   end
 
   service "mysql" do
