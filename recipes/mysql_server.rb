@@ -222,6 +222,20 @@ chown -R mysql:mysql  #{node['mysql']['data_dir']}
 chmod 700 #{node['mysql']['data_dir']}
 sudo -u mysql mysql_install_db
 service mysql start
+count=0
+while true; do
+    mysql -u root
+    RETVAL=$?
+    if [ $RETVAL == 0 ]; then
+        break
+    fi
+    sleep 10
+    count=`expr $count + 1`
+    if [ $count == 10 ]; then
+        echo "MySQL server is not connected."
+        exit 1
+    fi
+done
 EOH
     timeout 600
     action :nothing
