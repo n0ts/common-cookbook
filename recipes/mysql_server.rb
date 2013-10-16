@@ -1,12 +1,20 @@
 #
-# Cookbook Name:: common
-# Recipe:: mysql_server
+# Cookbook Name:: mysql
+# Recipe:: default
 #
-# Copyright 2013, Naoya Nakazawa
+# Copyright 2008-2011, Opscode, Inc.
 #
-# All rights reserved - Do Not Redistribute
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This recipe based on ospcode mysql::server
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
@@ -49,8 +57,8 @@ if platform_family?(%w{debian})
   end
 
   template "/var/cache/local/preseeding/mysql-server.seed" do
-    cookbook "mysql"
     source "mysql-server.seed.erb"
+    cookbook "mysql"
     owner "root"
     group node['mysql']['root_group']
     mode "0600"
@@ -58,8 +66,8 @@ if platform_family?(%w{debian})
   end
 
   template "#{node['mysql']['conf_dir']}/debian.cnf" do
-    cookbook "mysql"
     source "debian.cnf.erb"
+    cookbook "mysql"
     owner "root"
     group node['mysql']['root_group']
     mode "0600"
@@ -84,18 +92,11 @@ if platform_family?('windows')
   end
 end
 
-# after installation mysql server package, remove my.cnf one time
 node['mysql']['server']['packages'].each do |package_name|
   package package_name do
     action :install
-    notifies :run, "execute[remove-mycnf]" , :immediately
+    notifies :start, "service[mysql]", :immediately
   end
-end
-
-execute "remove-mycnf" do
-  command "rm -f #{node['mysql']['conf_dir']}/my.cnf"
-  user "root"
-  action :nothing
 end
 
 unless platform_family?(%w{mac_os_x})
@@ -178,8 +179,8 @@ unless platform_family?(%w{mac_os_x})
   rescue
     Chef::Log.info("Could not find previously defined grants.sql resource")
     t = template grants_path do
-      cookbook "mysql"
       source "grants.sql.erb"
+      cookbook "mysql"
       owner "root" unless platform_family? 'windows'
       group node['mysql']['root_group'] unless platform_family? 'windows'
       mode "0600"
@@ -201,46 +202,22 @@ unless platform_family?(%w{mac_os_x})
     end
   end
 
-  # no replace my.cnf
   template "#{node['mysql']['conf_dir']}/my.cnf" do
     source "my.cnf.erb"
     owner "root" unless platform? 'windows'
     group node['mysql']['root_group'] unless platform? 'windows'
     mode "0644"
+    case node['mysql']['reload_action']
+    when 'restart'
+      notifies :restart, "service[mysql]", :immediately
+    when 'reload'
+      notifies :reload, "service[mysql]", :immediately
+    else
+      Chef::Log.info "my.cnf updated but mysql.reload_action is #{node['mysql']['reload_action']}. No action taken."
+    end
     variables :skip_federated => skip_federated
+    ### no replace my.cnf
     action :create_if_missing
-    notifies :run, "bash[reinstall-mysql-datadir]", :immediately
-  end
-
-  bash "reinstall-mysql-datadir" do
-    user "root"
-    code <<-EOH
-service mysql stop
-mv #{node['mysql']['data_dir']} #{node['mysql']['data_dir']}-orig
-mkdir #{node['mysql']['data_dir']}
-chown -R mysql:mysql #{node['mysql']['data_dir']}
-chmod 700 #{node['mysql']['data_dir']}
-sudo -u mysql mysql_install_db
-service mysql start
-count=0
-while true; do
-    mysql -u root
-    RETVAL=$?
-    if [ $RETVAL == 0 ]; then
-        break
-    fi
-    sleep 60
-    count=`expr $count + 1`
-    if [ $count == 10 ]; then
-        echo "MySQL server is not connected."
-        exit 1
-    fi
-done
-EOH
-    timeout 600
-    action :nothing
-    notifies :run, "execute[assign-root-password]", :immediately
-    not_if { ::FileTest.directory?("#{node['mysql']['data_dir']}-orig") }
   end
 
   service "mysql" do
@@ -250,19 +227,7 @@ end
 
 
 #
-# mymemcheck
-#
-remote_file "/usr/local/bin/mymemcheck" do
-  source "https://gist.github.com/Craftworks/733390/raw/3ba64de584ad6bcdf8f4c76bedc7e1c3cb3538fa/mymemcheck"
-  owner "root"
-  group "root"
-  mode 0755
-  action :create
-end
-
-
-#
-# mysql_secure_installation
+# Execute - mysql_secure_installation
 #
 package "expect"
 

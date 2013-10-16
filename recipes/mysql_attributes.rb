@@ -8,3 +8,4 @@
 #
 
 node.override['mysql']['tunable']['server_id'] = node['ipaddress'][/\d+\.\d+$/].gsub(/\./, '')
+node.override['mysql']['bind_address'] = "0.0.0.0"
