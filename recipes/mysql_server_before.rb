@@ -109,12 +109,13 @@ while true; do
     fi
     sleep 60
     count=`expr $count + 1`
-    if [ $count == 10 ]; then
+    if [ $count == 60 ]; then
         echo "MySQL server is not connected."
         exit 1
     fi
 done
 EOH
+  timeout 3600
   action :nothing
 end
 
