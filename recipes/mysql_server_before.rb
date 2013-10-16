@@ -48,6 +48,7 @@ else
 fi
 EOH
   action :nothing
+  notifies :create, "template[#{node['mysql']['conf_dir']}/my.cnf]", :immediately
 end
 
 skip_federated = case node['platform']
@@ -66,24 +67,27 @@ template "#{node['mysql']['conf_dir']}/my.cnf" do
   mode "0644"
   variables :skip_federated => skip_federated
   action :create_if_missing
+  notifies :create, "template[/etc/apparmor.d/local/usr.sbin.mysqld]", :immediately if node['platform'] == 'ubuntu'
 end
 
 # AppArmor
-if node['platform'] == 'ubuntu'
-  template "/etc/apparmor.d/local/usr.sbin.mysqld" do
-    source "apparmor-local-usr-sbin-mysqld.erb"
-    owner "root"
-    group "root"
-    mode 0644
-    action :create
-    notifies :reload, "service[apparmor]", :immediately
-  end
-
-  service "apparmor" do
-    supports :status => true, :restart => true, :reload => true
-    action :nothing
-  end
+template "/etc/apparmor.d/local/usr.sbin.mysqld" do
+  source "apparmor-local-usr-sbin-mysqld.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  action :create
+  notifies :reload, "service[apparmor]", :immediately
+  only_if { node['platform'] == 'ubuntu'}
 end
+
+service "apparmor" do
+  supports :status => true, :restart => true, :reload => true
+  action :nothing
+  only_if { node['platform'] == 'ubuntu'}
+  notifies :run, "execute[mysql-install-db]", :immediately
+end
+
 
 execute "mysql-install-db" do
   command "mysql_install_db"
