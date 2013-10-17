@@ -282,7 +282,11 @@ quote-names
 max_allowed_packet      = <%= node['mysql']['tunable']['max_allowed_packet'] %>
 
 [mysql]
+<%- if node['mysql']['prompt'] == "" %>
 prompt="\u@\h[\d] mysql> "
+<%- else %>
+prompt="\u@<%= node['hostname'] %>[\d] <%= node['mysql']['prompt'] %> mysql> "
+<%- end %>
 show-warnings
 no-auto-rehash # faster start of mysql but no tab completition
 
