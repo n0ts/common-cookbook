@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-define :common_supervisor_service, :user => "root" do
+define :common_supervisor_service, :user => "root", :action => :enable do
   execute "supervisorctl-restart" do
     command "supervisorctl restart #{params[:name]}"
     action :nothing
@@ -20,7 +20,7 @@ define :common_supervisor_service, :user => "root" do
     stdout_logfile_backups 10
     user params[:user]
     autostart true
-    action :enable
+    action params[:action]
     notifies :run, "execute[supervisorctl-restart]", :delayed
   end
 end
