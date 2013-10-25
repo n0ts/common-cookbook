@@ -6,7 +6,7 @@ CHANGE MASTER TO
   MASTER_USER = 'repl',
   MASTER_PASSWORD = '<%= node['mysql']['server_repl_password'] %>',
   # FIXME: Change MASTER_LOG_FILE and LOG_POS
-  MASTER_LOG_FILE = 'mysql-bin.000001',
+  MASTER_LOG_FILE = 'log-bin.000001',
   MASTER_LOG_POS = 0,
   MASTER_CONNECT_RETRY = 10;
 
