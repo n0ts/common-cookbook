@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-define :common_profile_keychain, :user => "root", :group => "root" do
+define :common_profile_keychain do
   common_profile "keychain" do
     user params[:user]
     group params[:group]
@@ -22,7 +22,7 @@ EOH
 end
 
 
-define :common_profile, :user => "root", :group => "root", :content => "" do
+define :common_profile, :content => "" do
   execute "execute-profile" do
     user "root"
     command "sh /etc/profile.d/#{params[:name]}.sh"
