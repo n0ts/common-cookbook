@@ -32,8 +32,8 @@ LogFormat "time:%{%F %T}t\thost:%h\tident:%l\tuser:%u\treq:%r\tstatus:%>s\tsize:
 #
 # Default log
 #
-ErrorLog "<%= node['apache']['log_dir'] %>/error.log"
-CustomLog "<%= node['apache']['log_dir'] %>/access.log" combined_ltsv
+CustomLog "|/usr/sbin/rotatelogs <%= node['apache']['log_dir'] %>/access.log.%Y-%m-%d-%H 3600" combined_ltsv
+ErrorLog "|/usr/sbin/rotatelogs <%= node['apache']['log_dir'] %>/error.log.%Y-%m-%d-%H 3600"
 
 
 #
