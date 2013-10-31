@@ -8,7 +8,7 @@
 #
 
 # for apache recipe
-default['apache']['allow_from'] = '127.0.0.1'
+default['common']['apache']['allow_from'] = '127.0.0.1'
 
 # for activemq recipe
 default['activemq']['policy_entry']['topic']['memory_limit'] = '1mb'
