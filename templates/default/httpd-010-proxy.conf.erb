@@ -8,7 +8,7 @@
         AddDefaultCharset off
         Order deny,allow
         Deny from all
-        Allow from localhost
+        Allow from <%= ['apache']['allow_from'] %>
     </Proxy>
 
     ProxyVia On
