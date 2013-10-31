@@ -6,10 +6,9 @@
 # http://www.poptart.org/bin/view/Poptart/ModAutorotate
 #
 AutorotateEnabled       On
-AutorotateKeep          0
 AutorotatePeriod        <%= @autorotate_period %>
 AutorotateOffset        <%= @autorotate_offset %>
 AutorotateFormat        "<%= @autorotate_format %>"
-AutorotateCompressAfter <%= @autorotate_compress_after %>
 AutorotateRestartMethod graceful
 AutorotateKeep          0
+AutorotateCompressAfter <%= @autorotate_compress_after %>
