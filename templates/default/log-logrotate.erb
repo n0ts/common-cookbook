@@ -12,7 +12,7 @@
         fi
         find <% @log_dir %> \
           -maxdepth 1 \
-          -not -name <%= @logrotate_exclude_filename %> -name <%=@logrotate_filename %> \
+          -not -name "<%= @logrotate_exclude_filename %>" -name "<%=@logrotate_filename %>" \
           -type f \
           -exec mv -t <%= @prearchive_dir %> {} \;
     endscript
@@ -73,8 +73,8 @@
         mv ${1+"$@"} $TO_DIR/
     endscript
     lastaction
-        find <%= @log_dir %> \
-          -name <%=@logrotate_filename %> \
+        find "<%= @log_dir %>" \
+          -name "<%=@logrotate_filename %>" \
           -type f \
           -mtime +<%= @logrotate_rotate %>* \
           -exec rm -f {} \;
