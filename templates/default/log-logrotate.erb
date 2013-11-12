@@ -10,7 +10,7 @@
         if [ ! -d <%= @prearchive_dir %> ]; then
             mkdir <%= @prearchive_dir %>
         fi
-        find <% @log_dir %> \
+        find <%= @log_dir %> \
           -maxdepth 1 \
           -not -name "<%= @logrotate_exclude_filename %>" -name "<%=@logrotate_filename %>" \
           -type f \
