@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-define :common_logrote, :type => "daily", :log_dir => "", :filename => "", :logrotate_rotate => 30 do
+define :common_logrotate, :type => "daily", :log_dir => "", :filename => "", :logrotate_rotate => 30 do
   case params[:type]
   when "hourly"
     logrotate_exclude_filename = "*.`date +%Y-%m-%d-%H`*"
