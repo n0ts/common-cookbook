@@ -76,7 +76,7 @@
         find "<%= @log_dir %>" \
           -name "<%=@logrotate_filename %>" \
           -type f \
-          -mtime +<%= @logrotate_rotate %>* \
+          -mtime +<%= @logrotate_rotate %> \
           -exec rm -f {} \;
     endscript
 }
