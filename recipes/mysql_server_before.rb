@@ -130,4 +130,3 @@ remote_file "/usr/local/bin/mymemcheck" do
   mode 0755
   action :create
 end
-
