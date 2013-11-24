@@ -60,6 +60,16 @@ define :common_ssh_keys_private_key, :key_file => "", :id_rsa => "" do
   end
 end
 
+define :common_ssh_keys_public_key, :key_file => "", :id_rsa => "" do
+  file "/home/#{params[:name]}/.ssh/#{params[:key_file]}.pub" do
+    content params[:id_rsa]
+    owner params[:name]
+    group params[:name]
+    mode 0644
+    action :create
+  end
+end
+
 define :common_ssh_keys_config, :ssh_config => {} do
   template "/home/#{params[:name]}/.ssh/config" do
     source "ssh_config.erb"
