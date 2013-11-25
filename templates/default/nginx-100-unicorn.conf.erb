@@ -31,9 +31,12 @@ server {
 <% end -%>
 
   location ~* ^/assets {
+    try_files $uri @unicorn;
     gzip_static on;
     expires max;
     add_header Cache-Control public;
+    add_header Last-Modified "";
+    add_header ETag "";
   }
 
   location = /favicon.ico {
