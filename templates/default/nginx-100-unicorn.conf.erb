@@ -82,7 +82,7 @@ server {
 
 server {
   listen 8080;
-  server_name status.<%= @params[:server_name] %>;
+  server_name <%= @params[:server_name].split(' ')[0] %>;
   root <%= @params[:root] %>;
 
   access_log <%= @params[:access_log] %>.status-access.log ltsv;
