@@ -17,13 +17,14 @@
 # - 61222: XMPP (xmpp://)
 #
 
-activemq_dir = "#{node['activemq']['home']}/apache-activemq-#{node['activemq']['version']}"
+version = node['activemq']['version']
+activemq_home = "#{node['activemq']['home']}/apache-activemq-#{version}"
 
 #
 # ActiveMQ home symlink
 #
 link "#{node['activemq']['home']}/activemq" do
-  to activemq_dir
+  to activemq_home
 end
 
 
@@ -32,7 +33,7 @@ end
 #
 common_user "activemq" do
   shell "/bin/nologin"
-  home_dir activemq_dir
+  home_dir activemq_home
 end
 
 
@@ -42,17 +43,17 @@ end
 bash "set-activemq-directory-owner" do
   user "root"
   code <<-EOH
-chown -R activemq:activemq #{activemq_dir}
-chmod 755 #{activemq_dir}
+chown -R activemq:activemq #{activemq_home}
+chmod 755 #{activemq_home}
 EOH
-  only_if do ("%o" % File::stat(activemq_dir).mode)[-3, 3] == "700" end
+  only_if do ("%o" % File::stat(activemq_home).mode)[-3, 3] == "700" end
 end
 
 
 #
 # ActiveMQ init.d
 #
-template "#{activemq_dir}/bin/linux-x86-64/activemq" do
+template "#{activemq_home}/bin/linux-x86-64/activemq" do
   source "activemq-bin.erb"
   owner "activemq"
   group "activemq"
@@ -65,16 +66,9 @@ end
 #
 # ActiveMQ configuration
 #
-template "#{activemq_dir}/conf/activemq.xml" do
+template "#{activemq_home}/conf/activemq.xml" do
   source "activemq.xml.erb"
   mode 0644
-  owner "activemq"
-  group "activemq"
-  notifies :restart, "service[activemq]"
-end
-
-template "#{activemq_dir}/conf/credentials.properties" do
-  source "activemq-credentials.properties.erb"
   owner "activemq"
   group "activemq"
   action :create
