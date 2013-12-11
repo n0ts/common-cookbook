@@ -6,7 +6,7 @@ upstream <%= @params[:upstream] %>_reverse_proxy_server {
 }
 
 server {
-  listen <%= @params[:upstream_port] %>;
+  listen <%= @params[:port] %>;
   server_name <%= @params[:server_name] %>;
   root /usr/share/nginx/html;
   index index.html index.html;
