@@ -7,7 +7,6 @@
     missingok
     nosharedscripts
     firstaction
-        touch /var/lock/<%= @logrotate_dummy %>
         if [ ! -d <%= @prearchive_dir %> ]; then
             mkdir <%= @prearchive_dir %>
         fi
@@ -19,8 +18,7 @@
           -exec mv -t <%= @prearchive_dir %> {} \;
     endscript
     lastaction
-        touch /var/lock/<%= @logrotate_dummy %>
-        rm -f /var/lock/<%= @logrotate_dummy %>
+        mv /var/log/<%= @logrotate_dummy %>.1 /var/log/<%= @logrotate_dummy %>
     endscript
 }
 
@@ -30,6 +28,7 @@
     missingok
     nocreate
     nocopytruncate
+    nosharedscripts
     firstaction
         if [ ! -d <%= @archive_dir %> ]; then
             mkdir <%= @archive_dir %>
@@ -43,24 +42,25 @@
 <% if @logrotate_type == "hourly" -%>
         HOUR_OFFSET="12-13"
 <% end -%>
-        FILENAME=`basename ${1+"$@"}`
-        YEAR=`echo $FILENAME | cut -d. -f3 | cut -c $YEAR_OFFSET`
+        LOG=`echo $1 | sed -e "s/.1$//g"`
+        LOG_NAME=`basename $LOG`
+        YEAR=`echo $LOG_NAME | cut -d. -f3 | cut -c $YEAR_OFFSET`
         if [ -n "$YEAR" ]; then
             TO_DIR=$ARCHIVE_DIR/$YEAR
         fi
 
-        MONTH=`echo $FILENAME | cut -d. -f3 | cut -c $MONTH_OFFSET`
+        MONTH=`echo $LOG_NAME | cut -d. -f3 | cut -c $MONTH_OFFSET`
         if [ -n "$MONTH" ]; then
             TO_DIR=$ARCHIVE_DIR/$YEAR/$MONTH
         fi
 
-        DAY=`echo $FILENAME | cut -d. -f3 | cut -c $DAY_OFFSET`
+        DAY=`echo $LOG_NAME | cut -d. -f3 | cut -c $DAY_OFFSET`
         if [ -n "$DAY" ]; then
             TO_DIR=$ARCHIVE_DIR/$YEAR/$MONTH
         fi
 
 <% if @logrotate_type == "hourly" -%>
-        HOUR=`echo $FILENAME | cut -d. -f3 | cut -c $HOUR_OFFSET`
+        HOUR=`echo $LOG_NAME | cut -d. -f3 | cut -c $HOUR_OFFSET`
         if [ -n "$HOUR" ]; then
             TO_DIR=$ARCHIVE_DIR/$YEAR/$MONTH/$DAY
         fi
@@ -70,7 +70,7 @@
             mkdir -p $TO_DIR
         fi
 
-        mv ${1+"$@"} $TO_DIR/`echo $FILENAME | cut -d . -f 1-3`
+        mv $1 $TO_DIR/$LOG_NAME
     endscript
     lastaction
         find "<%= @log_dir %>" \
